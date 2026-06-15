@@ -1,0 +1,326 @@
+:root {
+    /* Dark theme variables (por defecto) */
+    --bg-page: #071021;
+    --bg-panel: rgba(255, 255, 255, 0.02);
+    --card-border: rgba(255, 255, 255, 0.03);
+    --text: #e6eef6;
+    --muted: #9aa4b2;
+    --accent: #e10600;
+    --accent-2: #ff5a3c;
+    --accent-contrast: #fff;
+    --radius: 12px;
+    --container-width: 1100px;
+    --gap: 16px;
+    --transition: 220ms cubic-bezier(.2, .9, .3, 1);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+/* Light theme overrides */
+html.light-theme {
+    --bg-page: #f3efe6;
+    /* crema suave */
+    --bg-panel: rgba(2, 6, 23, 0.03);
+    --card-border: rgba(2, 6, 23, 0.06);
+    --text: #5a0f12;
+    /* bordo elegante */
+    --muted: #6b6b6b;
+    --accent: #7a0b0b;
+    /* bordeo oscuro para botones */
+    --accent-2: #a12b2b;
+    --accent-contrast: #fff;
+}
+
+/* Base */
+* {
+    box-sizing: border-box
+}
+
+html,
+body {
+    height: 100%
+}
+
+body {
+    margin: 0;
+    color: var(--text);
+    background:
+        linear-gradient(180deg, rgba(2, 6, 23, 0.45), rgba(2, 6, 23, 0.45)),
+        url('bg-f1.jpg') center/cover no-repeat;
+    background-color: var(--bg-page);
+    background-blend-mode: overlay;
+    font-synthesis: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.45;
+    transition: background-color var(--transition), color var(--transition);
+}
+
+/* Overlay para mejorar contraste */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.45));
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* En modo claro atenuo el overlay para que el fondo crema se note */
+html.light-theme body::before {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.25));
+}
+
+/* Container */
+.container {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 28px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Header */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    backdrop-filter: blur(6px) saturate(120%);
+    background: linear-gradient(180deg, rgba(2, 6, 23, 0.35), rgba(2, 6, 23, 0.12));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--gap);
+}
+
+.brand {
+    margin: 0;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    color: var(--text);
+    font-size: 1.15rem;
+}
+
+/* Nav */
+.main-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.main-nav .nav-link {
+    color: var(--muted);
+    text-decoration: none;
+    margin-left: 8px;
+    font-size: 0.95rem;
+    padding: 8px 10px;
+    border-radius: 8px;
+    transition: color var(--transition), background var(--transition), transform var(--transition);
+}
+
+.main-nav .nav-link:hover {
+    color: var(--text);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+    transform: translateY(-2px);
+}
+
+/* Theme toggle */
+.theme-toggle {
+    margin-left: 12px;
+    background: transparent;
+    border: 1px solid var(--card-border);
+    color: var(--text);
+    padding: 8px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all var(--transition);
+    font-size: 0.95rem;
+}
+
+.theme-toggle:hover {
+    transform: translateY(-3px)
+}
+
+.theme-toggle .icon {
+    display: inline-block;
+    color: var(--muted);
+    transition: color var(--transition);
+}
+
+/* Mostrar solo el icono correspondiente por CSS */
+.theme-toggle .icon-sun {
+    display: none
+}
+
+html.light-theme .theme-toggle .icon-sun {
+    display: inline-block
+}
+
+html.light-theme .theme-toggle .icon-moon {
+    display: none
+}
+
+html:not(.light-theme) .theme-toggle .icon-moon {
+    display: inline-block
+}
+
+/* Panels */
+.panel {
+    background: var(--bg-panel);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-top: 18px;
+    box-shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
+    border: 1px solid var(--card-border);
+    transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
+}
+
+/* Headings */
+.panel h2 {
+    margin: 0 0 8px 0;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.6px;
+}
+
+/* Race list grid */
+.race-list {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+}
+
+.race-item {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.00));
+    border-radius: 10px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: transform .18s cubic-bezier(.2, .9, .3, 1), box-shadow .18s, background var(--transition);
+    cursor: pointer;
+    border: 1px solid var(--card-border);
+}
+
+.race-item:hover {
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: 0 18px 40px rgba(2, 6, 23, 0.6);
+}
+
+.race-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+.race-title {
+    font-weight: 700;
+    color: var(--text);
+    font-size: 0.98rem;
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    color: var(--accent-contrast);
+    border: none;
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.btn:active {
+    transform: translateY(1px)
+}
+
+.btn[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed
+}
+
+/* Results table */
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    background: transparent;
+}
+
+.results-table th,
+.results-table td {
+    padding: 10px 8px;
+    text-align: left;
+    border-bottom: 1px solid var(--card-border);
+    font-size: 0.95rem;
+    color: var(--text);
+}
+
+.results-table thead th {
+    color: var(--muted);
+    font-weight: 600;
+}
+
+/* Muted */
+.muted {
+    color: var(--muted)
+}
+
+/* Footer */
+.site-footer {
+    margin-top: 28px;
+    padding: 18px 0;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(8px)
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0)
+    }
+}
+
+.panel,
+.race-item,
+.results-table {
+    animation: fadeInUp .45s ease both;
+}
+
+/* Responsive */
+@media (max-width:720px) {
+    .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px
+    }
+
+    .race-list {
+        grid-template-columns: 1fr
+    }
+
+    .container {
+        padding: 18px
+    }
+}
