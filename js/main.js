@@ -1,4 +1,4 @@
-/* main.js - tema + calendario */
+/* main.js - tema + calendario/resultados (sin sobreescribir variables CSS innecesarias) */
 const API_BASE = 'https://ergast.com/api/f1';
 const season = new Date().getFullYear();
 const raceListEl = document.getElementById('race-list');
@@ -6,16 +6,26 @@ const resultsContainer = document.getElementById('results-container');
 const calendarNote = document.getElementById('calendar-note');
 const themeToggleBtn = document.getElementById('theme-toggle');
 
-// -------------------- TEMA: Light / Dark --------------------
 const THEME_KEY = 'f1app_theme';
 
 function applyTheme(theme) {
     if (theme === 'light') {
         document.documentElement.classList.add('light-theme');
         themeToggleBtn.setAttribute('aria-pressed', 'true');
+
+        // Forzar paneles más opacos y asegurar contraste en modo claro
+        document.documentElement.style.setProperty('--panel-bg', getComputedStyle(document.documentElement).getPropertyValue('--light-panel-bg') || 'rgba(255,255,255,0.96)');
+        document.documentElement.style.setProperty('--card-border', getComputedStyle(document.documentElement).getPropertyValue('--light-card-border') || 'rgba(2,6,23,0.08)');
+        // Ajuste del overlay (más fuerte tinte crema)
+        document.querySelector('body').style.setProperty('--overlay-opacity', '0.9');
     } else {
         document.documentElement.classList.remove('light-theme');
         themeToggleBtn.setAttribute('aria-pressed', 'false');
+
+        // Forzar paneles más oscuros y overlay más intenso en modo oscuro
+        document.documentElement.style.setProperty('--panel-bg', 'rgba(2,6,23,0.78)');
+        document.documentElement.style.setProperty('--card-border', 'rgba(255,255,255,0.05)');
+        document.querySelector('body').style.setProperty('--overlay-opacity', '1');
     }
 }
 
@@ -40,10 +50,9 @@ themeToggleBtn.addEventListener('click', () => {
     localStorage.setItem(THEME_KEY, next);
 });
 
-// Inicializa tema al cargar
 initTheme();
 
-// -------------------- UTILIDADES FECHA --------------------
+/* UTILIDADES FECHA Y FETCH/RENDER (idéntico a la versión previa) */
 function formatToART(dateString) {
     const d = new Date(dateString);
     const utc = d.getTime();
@@ -55,7 +64,6 @@ function formatToART(dateString) {
     });
 }
 
-// -------------------- FETCH CALENDARIO --------------------
 async function fetchCalendar(season) {
     const url = `${API_BASE}/${season}.json`;
     try {
@@ -70,7 +78,6 @@ async function fetchCalendar(season) {
     }
 }
 
-// -------------------- RENDER CARRERAS --------------------
 function renderRaces(races) {
     raceListEl.innerHTML = '';
     if (!races || races.length === 0) {
@@ -118,7 +125,6 @@ function renderRaces(races) {
     });
 }
 
-// -------------------- DETALLES Y RESULTADOS --------------------
 function showRaceDetails(race) {
     resultsContainer.innerHTML = '';
     const title = document.createElement('h3');
@@ -199,7 +205,6 @@ function renderResults(raceWithResults) {
     resultsContainer.appendChild(table);
 }
 
-// -------------------- INICIALIZACIÓN --------------------
 async function init() {
     try {
         const races = await fetchCalendar(season);

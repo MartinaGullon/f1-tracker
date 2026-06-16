@@ -1,33 +1,58 @@
 :root {
-    /* Dark theme variables (por defecto) */
+    --bg-image: url('../img/bg-f1-night.jpg');
     --bg-page: #071021;
-    --bg-panel: rgba(255, 255, 255, 0.02);
-    --card-border: rgba(255, 255, 255, 0.03);
-    --text: #e6eef6;
-    --muted: #9aa4b2;
-    --accent: #e10600;
-    --accent-2: #ff5a3c;
+
+    /* Glass / header / footer variables */
+    --glass-dark-bg: linear-gradient(180deg, rgba(2, 6, 23, 0.28), rgba(2, 6, 23, 0.08));
+    --glass-light-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.88));
+    --card-border-dark: rgba(255, 255, 255, 0.05);
+    --card-border-light: rgba(2, 6, 23, 0.08);
+
+    /* Panel base opacities */
+    --panel-bg-dark: rgba(2, 6, 23, 0.48);
+    /* panel en modo oscuro (no más transparente) */
+    --panel-bg-light: rgba(255, 255, 255, 0.56);
+    /* panel en modo claro: translúcido glass */
+
+    --text-dark: #e6eef6;
+    --text-light: #5a0f12;
+    --muted-dark: #9aa4b2;
+    --muted-light: #6b6b6b;
+
+    --accent-dark: #e10600;
+    --accent-dark-2: #ff5a3c;
+    --accent-light: #7a0b0b;
+    --accent-light-2: #a12b2b;
     --accent-contrast: #fff;
-    --radius: 12px;
+
+    --radius: 0;
     --container-width: 1100px;
     --gap: 16px;
     --transition: 220ms cubic-bezier(.2, .9, .3, 1);
     font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
-/* Light theme overrides */
+/* Tema claro: mapeo de variables */
 html.light-theme {
     --bg-page: #f3efe6;
-    /* crema suave */
-    --bg-panel: rgba(2, 6, 23, 0.03);
-    --card-border: rgba(2, 6, 23, 0.06);
-    --text: #5a0f12;
-    /* bordo elegante */
-    --muted: #6b6b6b;
-    --accent: #7a0b0b;
-    /* bordeo oscuro para botones */
-    --accent-2: #a12b2b;
-    --accent-contrast: #fff;
+    --panel-bg: var(--panel-bg-light);
+    --card-border: var(--card-border-light);
+    --text: var(--text-light);
+    --muted: var(--muted-light);
+    --accent: var(--accent-light);
+    --accent-2: var(--accent-light-2);
+    --glass-bg: var(--glass-light-bg);
+}
+
+/* Tema oscuro por defecto */
+:root:not(.light-theme) {
+    --panel-bg: var(--panel-bg-dark);
+    --card-border: var(--card-border-dark);
+    --text: var(--text-dark);
+    --muted: var(--muted-dark);
+    --accent: var(--accent-dark);
+    --accent-2: var(--accent-dark-2);
+    --glass-bg: var(--glass-dark-bg);
 }
 
 /* Base */
@@ -44,30 +69,55 @@ body {
     margin: 0;
     color: var(--text);
     background:
-        linear-gradient(180deg, rgba(2, 6, 23, 0.45), rgba(2, 6, 23, 0.45)),
-        url('bg-f1.jpg') center/cover no-repeat;
+        linear-gradient(180deg, rgba(0, 0, 0, 0.00), rgba(0, 0, 0, 0.00)),
+        var(--bg-image) center/cover fixed;
     background-color: var(--bg-page);
-    background-blend-mode: overlay;
-    font-synthesis: none;
+    background-blend-mode: normal;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.45;
     transition: background-color var(--transition), color var(--transition);
+    position: relative;
+    z-index: 0;
 }
 
-/* Overlay para mejorar contraste */
+/* Overlay sutil que deja ver la imagen pero mantiene contraste */
 body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.45));
-    pointer-events: none;
     z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.32));
+    mix-blend-mode: multiply;
+    filter: saturate(1.06) contrast(1.04) brightness(0.98);
+    transition: background var(--transition), filter var(--transition), opacity var(--transition);
 }
 
-/* En modo claro atenuo el overlay para que el fondo crema se note */
+/* Capa difuminada ligera para suavizar la imagen sin ocultarla */
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: transparent;
+    backdrop-filter: blur(4px);
+    opacity: 0.14;
+    transition: opacity var(--transition), backdrop-filter var(--transition);
+}
+
+/* Modo claro: tinte crema pero sin bloquear la imagen */
 html.light-theme body::before {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.25));
+    background: linear-gradient(180deg, rgba(243, 239, 230, 0.42), rgba(243, 239, 230, 0.36));
+    mix-blend-mode: screen;
+    filter: saturate(0.5) brightness(1.04) contrast(0.98);
+}
+
+html.light-theme body::after {
+    background: transparent;
+    backdrop-filter: blur(4px);
+    opacity: 0.14;
 }
 
 /* Container */
@@ -79,14 +129,14 @@ html.light-theme body::before {
     z-index: 1;
 }
 
-/* Header */
+/* Header (navbar) */
 .site-header {
     position: sticky;
     top: 0;
-    z-index: 5;
-    backdrop-filter: blur(6px) saturate(120%);
-    background: linear-gradient(180deg, rgba(2, 6, 23, 0.35), rgba(2, 6, 23, 0.12));
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    z-index: 6;
+    backdrop-filter: blur(8px) saturate(120%);
+    background: var(--glass-bg);
+    border-bottom: 1px solid var(--card-border);
 }
 
 .header-inner {
@@ -119,7 +169,7 @@ html.light-theme body::before {
     font-size: 0.95rem;
     padding: 8px 10px;
     border-radius: 8px;
-    transition: color var(--transition), background var(--transition), transform var(--transition);
+    transition: color var(--transition), background-color var(--transition), transform var(--transition);
 }
 
 .main-nav .nav-link:hover {
@@ -154,7 +204,7 @@ html.light-theme body::before {
     transition: color var(--transition);
 }
 
-/* Mostrar solo el icono correspondiente por CSS */
+/* Icon visibility */
 .theme-toggle .icon-sun {
     display: none
 }
@@ -171,15 +221,32 @@ html:not(.light-theme) .theme-toggle .icon-moon {
     display: inline-block
 }
 
-/* Panels */
+/* Panels: ahora usan el mismo estilo que navbar/footer (glass) */
+/* En modo claro: paneles glass translúcidos (permiten ver más el fondo) */
+/* En modo oscuro: paneles mantienen la opacidad previa (no más transparentes) */
 .panel {
-    background: var(--bg-panel);
-    border-radius: var(--radius);
+    border-radius: 0;
     padding: 20px;
     margin-top: 18px;
-    box-shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
+    box-shadow: 0 18px 48px rgba(2, 6, 23, 0.28);
     border: 1px solid var(--card-border);
-    transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
+    transition: transform var(--transition), box-shadow var(--transition), background-color var(--transition);
+    backdrop-filter: blur(6px);
+}
+
+/* Modo claro: paneles con mismo glass que navbar/footer */
+html.light-theme .panel {
+    background: var(--glass-light-bg);
+    border: 1px solid var(--card-border-light);
+    color: var(--text);
+    backdrop-filter: blur(6px);
+}
+
+/* Modo oscuro: paneles con la opacidad que ya tenías (no los hacemos más transparentes) */
+:root:not(.light-theme) .panel {
+    background: linear-gradient(180deg, rgba(2, 6, 23, 0.48), rgba(2, 6, 23, 0.06));
+    border: 1px solid var(--card-border-dark);
+    color: var(--text);
 }
 
 /* Headings */
@@ -202,20 +269,20 @@ html:not(.light-theme) .theme-toggle .icon-moon {
 }
 
 .race-item {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.00));
-    border-radius: 10px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.00));
+    border-radius: 0;
     padding: 14px;
     display: flex;
     flex-direction: column;
     gap: 8px;
-    transition: transform .18s cubic-bezier(.2, .9, .3, 1), box-shadow .18s, background var(--transition);
+    transition: transform .18s cubic-bezier(.2, .9, .3, 1), box-shadow .18s, background-color var(--transition);
     cursor: pointer;
     border: 1px solid var(--card-border);
 }
 
 .race-item:hover {
     transform: translateY(-8px) scale(1.01);
-    box-shadow: 0 18px 40px rgba(2, 6, 23, 0.6);
+    box-shadow: 0 26px 60px rgba(2, 6, 23, 0.35);
 }
 
 .race-meta {
@@ -275,18 +342,37 @@ html:not(.light-theme) .theme-toggle .icon-moon {
     font-weight: 600;
 }
 
-/* Muted */
-.muted {
-    color: var(--muted)
-}
-
-/* Footer */
+/* Footer: mismo estilo que navbar (glass), full width, sin bordes redondeados */
 .site-footer {
-    margin-top: 28px;
-    padding: 18px 0;
+    width: 100%;
+    margin: 28px 0 0 0;
+    padding: 18px 28px;
     text-align: center;
     color: var(--muted);
     font-size: 0.9rem;
+
+    background: var(--glass-bg);
+    backdrop-filter: blur(8px) saturate(120%);
+    border-top: 1px solid var(--card-border);
+
+    border-radius: 0;
+    position: relative;
+    z-index: 2;
+
+    box-shadow: 0 -6px 18px rgba(2, 6, 23, 0.12);
+}
+
+/* Modo claro: conservar la misma apariencia glass en footer */
+html.light-theme .site-footer {
+    background: var(--glass-light-bg);
+    border-top: 1px solid var(--card-border-light);
+    color: var(--muted);
+    box-shadow: 0 -6px 18px rgba(2, 6, 23, 0.06);
+}
+
+/* Muted */
+.muted {
+    color: var(--muted)
 }
 
 /* Animations */
@@ -308,16 +394,24 @@ html:not(.light-theme) .theme-toggle .icon-moon {
     animation: fadeInUp .45s ease both;
 }
 
-/* Responsive */
-@media (max-width:720px) {
-    .header-inner {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px
+/* Responsive: desactivar background-attachment fixed en móviles por rendimiento */
+@media (max-width: 720px) {
+    body {
+        background-attachment: scroll;
+        background-position: center top;
+        background-size: cover;
     }
 
-    .race-list {
-        grid-template-columns: 1fr
+    body::before,
+    body::after {
+        backdrop-filter: none;
+        filter: none;
+        opacity: 0.12;
+    }
+
+    .site-footer {
+        padding-left: 18px;
+        padding-right: 18px
     }
 
     .container {
